@@ -1,0 +1,174 @@
+#!/bin/bash
+clear
+menu=("Tao tai khoan" "Health check" "Shutdown" "Reboot" "Quit")
+
+PS3='Vui long chon chuc nang - Nhan Enter de xem lai bang chuc nang: '
+
+select click in "${menu[@]}"
+do
+  case $click in
+    "Tao tai khoan")
+      	if [ "$(whoami)" = "root" ];
+	then	
+		whill=0
+		while [ $whill -eq 0 ];
+		do
+		echo "Nhap User: "
+		read -t 10 user
+		id $user > /dev/null 2> /dev/null
+		if [ $? -eq 0 ];
+		then
+			#echo "User ton tai"
+			read -p "User ton tai. Nhan Y de nhap lai User: " yes
+			if [ $yes = "y" ];
+			then
+				whill=0
+			else
+				whill=1
+			fi
+		else
+			echo "*******************************"
+			useradd $user
+			echo "Tao tai khoan $user thanh cong!!!"
+			echo "*******************************"
+			declare -l yes
+			read -p "Ban muon dat mat khau cho User $user. Dong y bam Y: " yes
+			if [ $yes = "y" ];
+			then
+				whill=0
+				while [ $whill -eq 0 ]
+				do
+				echo "Dat mat khau manual hay random?"
+				echo -e "1) Manual \n2) random"
+				echo  "Vui long chon chuc nang: "
+				read chucnang
+				if [ $chucnang = '1' ];
+				then
+					passwd $user
+					echo "Changing password for user $user"
+					echo "Dat mat khau thanh cong"
+					echo -e "*************************************\n"
+					declare -l yes
+					read -p "Set User $user muon quyen root. Dong y bam Y: " yes
+					if [ $yes = 'y' ];
+					then
+						usermod -aG wheel $user
+						echo "Set User $user co quyen root thanh cong. Su dung sudo truoc command de muon quyen"
+					else
+						echo "Khong muon quyen root"
+					fi
+					whill=1
+				elif [ $chucnang = '2' ];
+				then
+					echo "$(openssl rand -base64 8)"
+					passwd $user
+					echo "Changing password for user $user"
+					echo "Dat mat khau thanh cong"
+					echo -e "*************************************\n"
+                                        declare -l yes
+                                        read -p "Set User $user muon quyen root. Dong y bam Y: " yes
+                                        if [ $yes = 'y' ];
+                                        then
+                                                usermod -aG wheel $user
+                                                echo "Set User $user co quyen root thanh cong. Su dung sudo truoc command de muon quyen"
+                                        else
+                                                echo "Khong muon quyen root"
+					fi
+					whill=1
+				else
+					echo "Sai cu phap vui long chon 1 hoac 2. Bam phim bat ki khong dat mat khau: "
+					read  x
+					if [ $x = '1' ] || [ $x = '2' ];
+					then
+						whill=0
+					else
+						whill=1
+					fi
+				fi
+				done
+					
+			#	fi
+			#	done
+			else
+				echo "User $user khong dat mat khau"
+				echo -e "*************************************\n"
+                                        declare -l yes
+                                        read -p "Set User $user muon quyen root. Dong y bam Y: " yes
+                                        if [ $yes = 'y' ];
+                                        then
+                                                usermod -aG wheel $user
+                                                echo "Set User $user co quyen root thanh cong. Su dung sudo truoc command de muon quyen"
+                                        else
+                                                echo "Khong muon quyen root"
+				fi
+			fi
+			whill=1
+		fi
+		done
+	read -n 1 -s -r -p "Press any key to continue"
+	clear
+
+	else
+		echo "Ban khong phai user Root"
+		read -n 1 -s -r -p "Press any key to continue"
+		clear
+	fi
+      ;;
+    "Health check")
+	echo "********** HEATH CHECK SYSTEM **********" 
+	echo -e  "May chu: $(hostname)\n"
+	echo -e "He dieu hanh: $(cat /etc/centos-release)\n"
+	echo -e "Thong tin kernel: $(uname -s)\n"
+	echo -e "Thong tin uptime: $(uptime)\n"
+	echo -e "CPU: $(cat /proc/cpuinfo | sed -n '5p'| cut -d ':' -f 2)\n"
+	echo -e "So Core Cpu: $(cat /proc/cpuinfo | grep 'cpu cores' | cut -d ":" -f 2)\n"
+	echo "Thong tin Memory"
+	echo "$(free)"
+	read -n 1 -s -r -p "Press any key to continue"
+	clear
+      ;;
+    "Shutdown")
+	declare -l yes
+	read -p "Bam Y de Shutdown: " yes
+	if [ $yes = 'y' ];
+	then
+		sudo init 0
+	fi
+	read -n 1 -s -r -p "Press any key to continue"
+	clear
+      ;;
+    "Reboot")
+	declare -l yes
+	read -p "Bam Y de Reboot: " yes
+	if [ $yes = 'y' ];
+	then
+		sudo init 6
+	fi
+	read -n 1 -s -r -p "Press any key to continue"
+	clear
+      ;;
+    "Quit")
+	declare -l yes
+	read -p "Ban co muon thoat chuong trinh. Bam Y de thoat: " yes
+	if [ $yes = 'y' ];
+	then
+		echo "**********************************"
+		echo "       HAVE A NICE DAY            "
+		echo "**********************************"
+
+		break
+	else
+		echo "Ban da cancel"
+		
+	read -n 1 -s -r -p "Press any key to continue"
+	clear
+	fi
+      
+      ;;
+    *)
+     echo "Sai cu phap. Vui long chon lai chuc nang"
+	clear
+     ;;
+  esac
+
+done
