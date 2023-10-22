@@ -1,3 +1,9 @@
 Hung Test 2
 144444423 +28
 Hung test 33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
+
+This page contains download links for the latest released version of PuTTY. Currently this is 0.79, released on 2023-08-26.
+
+When new releases come out, this page will update to contain the latest, so this is a good page to bookmark or link to. Alternatively, here is a permanent link to the 0.79 release.
+
+Release versions of PuTTY are versions we think are reasonably likely to work well. However, they are often not the most up-to-date version of the code available. If you have a problem with this release, then it might be worth trying out the development snapshots, to see if the problem has already been fixed in those versions. 
